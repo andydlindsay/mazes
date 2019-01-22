@@ -3,7 +3,7 @@ import * as helpers from './helpers/helpers';
 
 const maxX: number = 4;
 const maxY: number = 4;
-const nodes: { [key: string]: Node; } = {};
+const nodes: { [key: string]: Node } = {};
 const startingCoords: string = helpers.randomStartingCell(maxX, maxY);
 const stack: string[] = [];
 
@@ -17,8 +17,24 @@ for (let i: number = 0; i < maxY; i++) {
 }
 
 stack.push(startingCoords);
-visitedNodeCount++;
+let currentNode: Node;
 
-// while (visitedNodeCount < maxX * maxY) {
+while (visitedNodeCount < maxX * maxY) {
+    currentNode = nodes[stack[stack.length - 1]];
+    if (!currentNode.visited) {
+        currentNode.visited = true;
+        visitedNodeCount++;
+    }
+    
+    let neighbours: string[] = helpers.findNeighbours(stack[stack.length - 1], maxX, maxY);
+    neighbours = neighbours.filter((elem) => {
+        return !nodes[elem].visited;
+    });
 
-// }
+    if (neighbours.length > 0) {
+        const nextCoords = neighbours[Math.floor(Math.random() * neighbours.length)];
+        stack.push(nextCoords);
+    } else {
+        stack.pop();
+    }
+}
