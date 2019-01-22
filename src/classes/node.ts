@@ -1,4 +1,6 @@
 export default class Node {
+    [key: string]: any;
+    
     above: Node | null = null;
     right: Node | null = null;
     below: Node | null = null;

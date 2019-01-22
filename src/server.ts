@@ -17,24 +17,46 @@ for (let i: number = 0; i < maxY; i++) {
 }
 
 stack.push(startingCoords);
-let currentNode: Node;
+let currentNode: Node = nodes[stack[stack.length - 1]];
+currentNode.visited = true;
+visitedNodeCount++;
 
 while (visitedNodeCount < maxX * maxY) {
+    let neighbours: [string, string][] = helpers.findNeighbours(stack[stack.length - 1], maxX, maxY);
+    neighbours = neighbours.filter((elem) => {
+        return !nodes[elem[0]].visited;
+    });
+
+    if (neighbours.length > 0) {
+        const nextNodeCoords = neighbours[Math.floor(Math.random() * neighbours.length)];
+        const nextNode = nodes[nextNodeCoords[0]];
+
+        currentNode[nextNodeCoords[1]] = nextNode;
+        switch (nextNodeCoords[1]) {
+            case 'above':
+                nextNode.below = currentNode;
+                break;
+            case 'right':
+                nextNode.left = currentNode;
+                break;
+            case 'below':
+                nextNode.above = currentNode;
+                break;
+            case 'left':
+                nextNode.right = currentNode;
+                break;
+        }
+
+        stack.push(nextNodeCoords[0]);
+    } else {
+        stack.pop();
+    }
+
     currentNode = nodes[stack[stack.length - 1]];
     if (!currentNode.visited) {
         currentNode.visited = true;
         visitedNodeCount++;
     }
-    
-    let neighbours: string[] = helpers.findNeighbours(stack[stack.length - 1], maxX, maxY);
-    neighbours = neighbours.filter((elem) => {
-        return !nodes[elem].visited;
-    });
-
-    if (neighbours.length > 0) {
-        const nextCoords = neighbours[Math.floor(Math.random() * neighbours.length)];
-        stack.push(nextCoords);
-    } else {
-        stack.pop();
-    }
 }
+
+console.log(nodes);
